@@ -1,5 +1,4 @@
-import { useDispatch } from "react-redux";
-import { reactionAdded } from "./PostSlice";
+import { useAddReactionMutation } from "./PostSlice";
 import { useRef } from "react";
 
 const reactionEmoji = {
@@ -11,7 +10,7 @@ const reactionEmoji = {
 }
 
 const ReactionButton = ({post}) => {
-  const dispatch = useDispatch();
+  const [addReaction] = useAddReactionMutation();
   const effectRan = useRef(false);
 
   const reactionButtons = Object.entries(reactionEmoji).map(([name,emoji]) => {
@@ -22,10 +21,8 @@ const ReactionButton = ({post}) => {
             className="reactionButton"
             onClick={() => {
                 if(effectRan.current === false) {
-                    dispatch(reactionAdded({ postId: post.id, reaction: name }))
-                        return () => {
-                            effectRan.current = true
-                        }
+                    const newValue = post.reactions[name] + 1;
+                    addReaction({ postId: post.id, reactions: {...post.reactions, [name]: newValue}})
                     }
                 }
             }
